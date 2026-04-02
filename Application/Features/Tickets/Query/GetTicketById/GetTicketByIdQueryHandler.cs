@@ -2,7 +2,6 @@
 
 public record GetTicketByIdQuery(int Id) : IRequest<TicketDto?>;
 
-// Handler - ასრულებს ძებნის ლოგიკას
 public class GetTicketByIdQueryHandler : IRequestHandler<GetTicketByIdQuery, TicketDto?>
 {
     private readonly ITicketRepository _repo;

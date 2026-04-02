@@ -9,13 +9,13 @@ public class EventsController : ControllerBase
     private readonly IMediator _mediator;
     public EventsController(IMediator mediator) => _mediator = mediator;
 
-    [HttpGet] // ყველა ღონისძიება
+    [HttpGet]
     public async Task<ActionResult<List<EventDto>>> GetAll() => await _mediator.Send(new GetEventsQuery());
 
-    [HttpGet("{id}")] // კონკრეტული ღონისძიება დეტალურად
+    [HttpGet("{id}")]
     public async Task<ActionResult<EventDto>> GetById(int id) => await _mediator.Send(new GetEventByIdQuery(id));
 
-    [HttpPost, Authorize] // ახალი ღონისძიების შექმნა
+    [HttpPost, Authorize]
     public async Task<ActionResult<int>> Create(CreateEventCommand command) => await _mediator.Send(command);
 
     [HttpPut("{id}")]

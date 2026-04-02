@@ -1,9 +1,7 @@
-﻿// Query
-using MediatR;
+﻿using MediatR;
 
 public record GetUserPurchasesQuery(int UserId) : IRequest<List<UserTicketDto>>;
 
-// Handler
 public class GetUserPurchasesHandler : IRequestHandler<GetUserPurchasesQuery, List<UserTicketDto>>
 {
     private readonly ITicketService _ticketService;

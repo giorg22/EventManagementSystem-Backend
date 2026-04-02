@@ -14,7 +14,6 @@ public class CreateHallCommandHandler : IRequestHandler<CreateHallCommand, int>
             Address = request.Address,
             MaxCapacity = request.MaxCapacity,
             Location = request.Location,
-            // EF ავტომატურად მიანიჭებს HallId-ს ამ რესურსებს შენახვისას
             Resources = request.Resources.Select(r => new Resource
             {
                 Name = r.Name,

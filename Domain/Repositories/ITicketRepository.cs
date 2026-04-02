@@ -1,4 +1,4 @@
 ﻿public interface ITicketRepository : IBaseRepository<Ticket, int>
 {
-    Task<int> SavePurchaseAsync(Purchase purchase); // Purchase ენტობისთვის
+    Task<int> SavePurchaseAsync(Purchase purchase);
 }

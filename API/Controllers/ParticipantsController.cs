@@ -8,9 +8,9 @@ public class ParticipantsController : ControllerBase
     private readonly IMediator _mediator;
     public ParticipantsController(IMediator mediator) => _mediator = mediator;
 
-    [HttpPost("verify-qr")] // QR კოდის სკანირება (Attendance = true)
+    [HttpPost("verify-qr")]
     public async Task<ActionResult<bool>> VerifyQr(VerifyQrCommand command) => await _mediator.Send(command);
 
-    [HttpGet("event/{eventId}")] // მონაწილეების სია (ადმინისთვის)
+    [HttpGet("event/{eventId}")]
     public async Task<ActionResult<List<ParticipantDto>>> GetByEvent(int eventId) => await _mediator.Send(new GetParticipantsQuery(eventId));
 }

@@ -6,7 +6,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // SQL Server / DbContext რეგისტრაცია
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"),
@@ -19,7 +18,6 @@ public static class DependencyInjection
         services.AddScoped<IAnalyticsService, AnalyticsService>();
 
 
-        // Repositories (BaseRepository-ს მემკვიდრეები)
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<ITicketRepository, TicketRepository>();
         services.AddScoped<IParticipantRepository, ParticipantRepository>();
@@ -28,10 +26,8 @@ public static class DependencyInjection
         services.AddScoped<IHallRepository, HallReposotory>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
 
-        // გარე სერვისები (Email, Payment, Auth)
         services.AddScoped<IPaymentService, MockPaymentService>();
         services.AddScoped<IFileService, FileService>();
-        // services.AddScoped<IEmailService, EmailService>(); // თუ გაქვთ იმპლემენტაცია
 
         return services;
     }

@@ -28,14 +28,14 @@ public class GetEventByIdQueryHandler : IRequestHandler<GetEventByIdQuery, Event
                 Id = t.Id,
                 Type = t.Type,
                 Price = t.Price,
-                Quantity = t.Quantity, // რედაქტირებისთვის ჯამური რაოდენობა გვჭირდება
+                Quantity = t.Quantity,
                 Remaining = t.RemainingQuantity
             }).ToList(),
             Artists = ev.Artists.Select(a => new ArtistDto
             {
                 FullName = a.FullName,
                 Role = a.Role
-            }).ToList() // არტისტების მაპინგი
+            }).ToList()
         };
     }
 }

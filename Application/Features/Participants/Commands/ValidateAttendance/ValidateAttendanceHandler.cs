@@ -7,7 +7,6 @@ public class ValidateAttendanceHandler : IRequestHandler<ValidateAttendanceComma
 
     public async Task<bool> Handle(ValidateAttendanceCommand req, CancellationToken ct)
     {
-        // ლოგიკა: ვეძებთ მონაწილეს QR კოდის მიხედვით და ვნიშნავთ, რომ მოვიდა
         var participant = await _repo.GetByQrAsync(req.QrCodeData);
         if (participant == null) return false;
 

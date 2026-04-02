@@ -6,11 +6,11 @@
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public int Capacity { get; set; }
-    public int HallId { get; set; } // აუცილებელია განახლებისთვის
+    public int HallId { get; set; }
     public string Status { get; set; } = "DRAFT";
     public string? ImageUrl { get; set; }
     public List<TicketDto> Tickets { get; set; } = new();
-    public List<ArtistDto> Artists { get; set; } = new(); // დაამატე ეს
+    public List<ArtistDto> Artists { get; set; } = new();
 }
 
 public class ArtistDto

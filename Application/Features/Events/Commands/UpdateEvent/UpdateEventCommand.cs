@@ -9,7 +9,10 @@ public record UpdateEventCommand : IRequest<bool>
     public DateTime EndDate { get; init; }
     public int Capacity { get; init; }
     public int HallId { get; init; }
-    public List<UpdateTicketCommand> Tickets { get; init; } = new();
+    public string? ImageUrl { get; init; }
+    public List<UpdateTicketDto> Tickets { get; init; } = new();
+    public List<UpdateArtistDto> Artists { get; init; } = new();
 }
 
-public record UpdateTicketCommand(string Type, decimal Price, int Quantity);
+public record UpdateTicketDto(string Type, decimal Price, int Quantity);
+public record UpdateArtistDto(string FullName, string Role);

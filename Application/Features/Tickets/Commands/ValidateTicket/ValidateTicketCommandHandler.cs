@@ -11,7 +11,6 @@ public class ValidateTicketCommandHandler : IRequestHandler<ValidateTicketComman
     {
         var participant = await _repo.GetByQrAsync(request.QrCode);
 
-        // თუ ბილეთი არ არსებობს ან უკვე გამოყენებულია (Attendance = true)
         if (participant == null || participant.Attendance) return false;
 
         participant.Attendance = true;

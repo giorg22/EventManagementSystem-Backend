@@ -12,7 +12,7 @@ public class VerifyQrCommandHandler : IRequestHandler<VerifyQrCommand, bool>
         var participant = await _repo.GetByQrAsync(request.QrCodeData);
 
         if (participant == null || participant.Attendance)
-            return false; // თუ უკვე მოსულია ან არ არსებობს
+            return false;
 
         participant.Attendance = true;
         await _repo.UpdateAsync(participant);

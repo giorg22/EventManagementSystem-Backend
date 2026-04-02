@@ -8,7 +8,6 @@
     public DateTime EventStartDate { get; init; }
     public string Status { get; init; } = string.Empty;
 
-    // QR კოდის გენერაციისთვის საჭირო უნიკალური სტრინგი
     public string TicketHash => $"TKT-{PurchaseId}-{EventStartDate:yyyyMMdd}";
 
     public UserTicketDto(

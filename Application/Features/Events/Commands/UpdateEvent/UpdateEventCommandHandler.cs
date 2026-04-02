@@ -8,12 +8,10 @@ public class UpdateEventCommandHandler : IRequestHandler<UpdateEventCommand, boo
 
     public async Task<bool> Handle(UpdateEventCommand request, CancellationToken ct)
     {
-        // 1. მოვძებნოთ არსებული ივენთი ბილეთებთან ერთად
         var existingEvent = await _repo.GetEventWithTicketsAndArtistsAsync(request.Id);
 
         if (existingEvent == null) return false;
 
-        // 2. მონაცემების განახლება (Command -> Entity)
         existingEvent.Title = request.Title;
         existingEvent.Description = request.Description;
         existingEvent.StartDate = request.StartDate;
@@ -21,7 +19,11 @@ public class UpdateEventCommandHandler : IRequestHandler<UpdateEventCommand, boo
         existingEvent.Capacity = request.Capacity;
         existingEvent.HallId = request.HallId;
 
-        // 3. ბილეთების განახლება (წაშლა და ხელახლა დამატება)
+        if (!string.IsNullOrEmpty(request.ImageUrl))
+        {
+            existingEvent.ImageUrl = request.ImageUrl;
+        }
+
         existingEvent.Tickets.Clear();
         foreach (var t in request.Tickets)
         {
@@ -34,7 +36,16 @@ public class UpdateEventCommandHandler : IRequestHandler<UpdateEventCommand, boo
             });
         }
 
-        // 4. ბაზაში შენახვა
+        existingEvent.Artists.Clear();
+        foreach (var a in request.Artists)
+        {
+            existingEvent.Artists.Add(new Artist
+            {
+                FullName = a.FullName,
+                Role = a.Role
+            });
+        }
+
         await _repo.UpdateAsync(existingEvent);
 
         return true;
