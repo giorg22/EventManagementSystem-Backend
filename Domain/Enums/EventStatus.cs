@@ -1,0 +1,1 @@
+﻿public enum EventStatus { Draft, Published, Completed }

@@ -1,0 +1,1 @@
+﻿public enum PurchaseStatus { Pending, Completed, Cancelled }

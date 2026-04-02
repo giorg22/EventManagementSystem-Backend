@@ -1,0 +1,1 @@
+﻿public enum UserRole { User, Organizer, Admin }
