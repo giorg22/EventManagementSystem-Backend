@@ -1,6 +1,8 @@
 ﻿using MediatR;
 
-public record PurchaseTicketCommand(int EventId, int TicketId, int UserId) : IRequest<int>;
+public record PurchaseTicketCommand(int EventId, int UserId, List<TicketSelection> Selections) : IRequest<int>;
+
+public record TicketSelection(int TicketId, int Quantity);
 
 public class PurchaseTicketCommandHandler : IRequestHandler<PurchaseTicketCommand, int>
 {
@@ -23,39 +25,64 @@ public class PurchaseTicketCommandHandler : IRequestHandler<PurchaseTicketComman
 
     public async Task<int> Handle(PurchaseTicketCommand request, CancellationToken ct)
     {
-        var ticket = await _ticketRepo.GetByIdAsync(request.TicketId);
-        if (ticket == null || ticket.RemainingQuantity <= 0)
-            throw new Exception("ბილეთები ამოიწურა!");
+        decimal totalToPay = 0;
+        var participantsToAdd = new List<Participant>();
+        var purchasesToCreate = new List<Purchase>();
 
-        var transactionId = await _paymentService.ProcessPaymentAsync(ticket.Price);
-        if (string.IsNullOrEmpty(transactionId)) throw new Exception("გადახდა ვერ მოხერხდა");
-
-        ticket.RemainingQuantity--;
-        await _ticketRepo.UpdateAsync(ticket);
-
-        var purchase = new Purchase
+        foreach (var selection in request.Selections)
         {
-            TicketId = request.TicketId,
-            UserId = request.UserId,
-            Quantity = 1,
-            TotalAmount = ticket.Price,
-            Status = PurchaseStatus.Completed,
-            PurchaseDate = DateTime.UtcNow
-        };
+            var ticket = await _ticketRepo.GetByIdAsync(selection.TicketId);
+            if (ticket == null || ticket.RemainingQuantity < selection.Quantity)
+                throw new Exception($"ბილეთი {ticket?.Type} ამოწურულია!");
 
-        await _purchaseRepository.AddAsync(purchase);
+            decimal subTotal = ticket.Price * selection.Quantity;
+            totalToPay += subTotal;
 
-        var participant = new Participant
+            // 1. ვქმნით ცალკეულ Purchase ობიექტს თითოეული ბილეთის ტიპისთვის
+            purchasesToCreate.Add(new Purchase
+            {
+                TicketId = selection.TicketId, // აქ მიეთითება კონკრეტული ტიპის ID
+                UserId = request.UserId,
+                Quantity = selection.Quantity,
+                TotalAmount = subTotal,
+                PurchaseDate = DateTime.UtcNow,
+                Status = PurchaseStatus.Completed // ან Pending, გადახდის ლოგიკიდან გამომდინარე
+            });
+
+            // 2. ვამზადებთ მონაწილეებს (Participants) უნიკალური QR კოდებით
+            for (int i = 0; i < selection.Quantity; i++)
+            {
+                participantsToAdd.Add(new Participant
+                {
+                    EventId = request.EventId,
+                    UserId = request.UserId,
+                    TicketId = selection.TicketId,
+                    PaidAmount = ticket.Price,
+                    QrCodeData = Guid.NewGuid().ToString()
+                });
+            }
+
+            // 3. ვაახლებთ რაოდენობას ბაზაში
+            ticket.RemainingQuantity -= selection.Quantity;
+            await _ticketRepo.UpdateAsync(ticket);
+        }
+
+        // 4. გადახდა ხორციელდება ერთიანად (მთლიან ჯამზე)
+        await _paymentService.ProcessPaymentAsync(totalToPay);
+
+        // 5. ვინახავთ ყველა შესყიდვას ბაზაში
+        foreach (var purchase in purchasesToCreate)
         {
-            EventId = request.EventId,
-            UserId = request.UserId,
-            TicketId = request.TicketId,
-            PaidAmount = ticket.Price,
-            QrCodeData = Guid.NewGuid().ToString(),
-            RegistrationDate = DateTime.UtcNow
-        };
+            await _purchaseRepository.AddAsync(purchase);
+        }
 
-        var result = await _participantRepo.AddAsync(participant);
-        return result.Id;
+        // 6. ვინახავთ ყველა მონაწილეს
+        foreach (var p in participantsToAdd)
+        {
+            await _participantRepo.AddAsync(p);
+        }
+
+        // ვაბრუნებთ ბოლო შესყიდვის ID-ს ან შეგიძლიათ შეცვალოთ ლოგიკა საჭიროებისამებრ
+        return purchasesToCreate.LastOrDefault()?.Id ?? 0;
     }
 }

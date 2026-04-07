@@ -24,6 +24,7 @@ public class ParticipantRepository : BaseRepository<Participant, int>, IParticip
     public async Task<List<Participant>> GetByEventIdAsync(int eventId)
     {
         return await _context.Participants
+            .Include(x => x.Ticket)
             .Where(p => p.EventId == eventId)
             .ToListAsync();
     }

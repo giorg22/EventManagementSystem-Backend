@@ -22,16 +22,26 @@ public class TicketService : ITicketService
             .Where(p => p.UserId == userId)
             .Include(p => p.Ticket)
                 .ThenInclude(t => t.Event)
-            .OrderByDescending(p => p.PurchaseDate)
-            .Select(p => new UserTicketDto(
-                p.Id,
-                p.Ticket.Event.Title,
-                p.Ticket.Type,
-                p.Quantity,
-                p.TotalAmount,
-                p.Ticket.Event.StartDate,
-                p.Status.ToString()
-            ))
+            .GroupBy(p => p.Ticket.EventId)
+            .Select(group => new UserTicketDto
+            {
+                EventTitle = group.First().Ticket.Event.Title,
+                EventStartDate = group.First().Ticket.Event.StartDate,
+
+                Quantity = group.Sum(p => p.Quantity),
+
+                TotalAmount = group.Sum(p => p.TotalAmount),
+
+                TicketType = string.Join(", ", group.Select(p => p.Ticket.Type).Distinct()),
+
+                Status = group.First().Status.ToString(),
+
+                QrCodes = _context.Participants
+                    .Where(part => part.EventId == group.Key && part.UserId == userId)
+                    .Select(part => part.QrCodeData)
+                    .ToList()
+            })
+            .OrderByDescending(dto => dto.EventStartDate)
             .ToListAsync();
     }
 

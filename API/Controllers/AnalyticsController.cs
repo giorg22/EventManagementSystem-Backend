@@ -2,13 +2,23 @@
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/analytics")]
 public class AnalyticsController : ControllerBase
 {
     private readonly IMediator _mediator;
     public AnalyticsController(IMediator mediator) => _mediator = mediator;
 
-    [HttpGet("event/{eventId}")]
-    public async Task<ActionResult<EventAnalyticsDto>> GetStats(int eventId) =>
-        await _mediator.Send(new GetEventStatsQuery(eventId));
+    // მთლიანი დეშბორდი
+    [HttpGet("{eventId}")]
+    public async Task<IActionResult> GetFullStats(int eventId)
+        => Ok(await _mediator.Send(new GetEventAnalyticsQuery(eventId)));
+
+    // მხოლოდ გრაფიკის მონაცემები (მაგ. ბოლო 7 დღე)
+    [HttpGet("{eventId}/daily-sales")]
+    public async Task<IActionResult> GetDailySales(int eventId, [FromQuery] int days = 7)
+        => Ok(await _mediator.Send(new GetDailySalesQuery(eventId, days)));
+
+    [HttpGet("{eventId}/ticket-types")]
+    public async Task<ActionResult<List<TicketTypeStatsDto>>> GetTicketTypeStats(int eventId)
+        => Ok(await _mediator.Send(new GetTicketTypeStatsQuery(eventId)));
 }

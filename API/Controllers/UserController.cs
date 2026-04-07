@@ -13,13 +13,13 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("auth")]
-    public async Task<ActionResult<AuthResponse>> Purchase(AuthCommand command)
+    public async Task<ActionResult<AuthResponse>> Auth(AuthCommand command)
     {
         return await _mediator.Send(command);
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<RegisterResponse>> Validate(RegisterUserCommand command)
+    public async Task<ActionResult<RegisterResponse>> Register(RegisterUserCommand command)
     {
         var result = await _mediator.Send(command);
 

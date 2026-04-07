@@ -7,5 +7,5 @@
     public int Quantity { get; set; }
     public int RemainingQuantity { get; set; }
     public TicketStatus Status { get; set; } = TicketStatus.Available;
-    public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
+    public ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
 }

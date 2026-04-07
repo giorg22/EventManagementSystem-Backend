@@ -22,99 +22,72 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Ticket>()
-    .Property(t => t.Price)
-    .HasPrecision(18, 2);
+        // -------------------- EVENT --------------------
+        modelBuilder.Entity<Event>(entity =>
+        {
+            entity.HasOne(e => e.Hall)
+                .WithMany()
+                .HasForeignKey(e => e.HallId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Purchase>()
-            .Property(p => p.TotalAmount)
-            .HasPrecision(18, 2);
+            // Many-to-Many Artist-ებთან
+            entity.HasMany(e => e.Artists)
+                .WithMany(a => a.Events);
+        });
 
-        modelBuilder.Entity<Participant>()
-            .Property(p => p.PaidAmount)
-            .HasPrecision(18, 2);
+        // -------------------- PURCHASE --------------------
+        modelBuilder.Entity<Purchase>(entity =>
+        {
+            entity.HasOne(p => p.Ticket)
+                .WithMany(t => t.Purchases)
+                .HasForeignKey(p => p.TicketId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-        //modelBuilder.Entity<Purchase>()
-        //    .HasOne(p => p.Ticket)           // Purchase-ს აქვს ერთი Ticket
-        //    .WithMany(t => t.Purchases)      // Ticket-ს აქვს ბევრი Purchase
-        //    .HasForeignKey(p => p.TicketId)  // უთხარი, რომ გამოიყენოს ზუსტად ეს ველი!
-        //    .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-        //// 1. EVENT კონფიგურაცია
-        //modelBuilder.Entity<Event>(entity =>
-        //{
-        //    entity.HasKey(e => e.Id);
-        //    entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
-        //    entity.Property(e => e.Status)
-        //        .HasConversion(v => v.ToString(), v => (EventStatus)Enum.Parse(typeof(EventStatus), v));
-        //});
+            entity.Property(p => p.Status)
+                .HasConversion<string>();
+        });
 
-        //// 2. TICKET კონფიგურაცია
-        //modelBuilder.Entity<Ticket>(entity =>
-        //{
-        //    entity.HasKey(t => t.Id);
-        //    entity.Property(t => t.Price).HasPrecision(18, 2);
+        // -------------------- PARTICIPANT --------------------
+        modelBuilder.Entity<Participant>(entity =>
+        {
+            // აუცილებელია Ticket-თან კავშირი
+            entity.HasOne(p => p.Ticket)
+                .WithMany()
+                .HasForeignKey(p => p.TicketId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-        //    entity.HasOne(t => t.Event)
-        //        .WithMany(e => e.Tickets)
-        //        .HasForeignKey(t => t.EventId)
-        //        .OnDelete(DeleteBehavior.Cascade);
-        //});
+            entity.HasOne(p => p.Event)
+                .WithMany()
+                .HasForeignKey(p => p.EventId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-        //// 3. PURCHASE კონფიგურაცია
-        //modelBuilder.Entity<Purchase>(entity =>
-        //{
-        //    entity.HasKey(p => p.Id);
-        //    entity.Property(p => p.TotalAmount).HasPrecision(18, 2);
+            entity.HasOne(p => p.User)
+                .WithMany(u => u.Participations)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
 
-        //    entity.HasOne(p => p.Ticket)
-        //        .WithMany()
-        //        .HasForeignKey(p => p.TicketId)
-        //        .OnDelete(DeleteBehavior.Restrict);
-        //});
+        // -------------------- HALL & RESOURCE --------------------
+        modelBuilder.Entity<Hall>(entity =>
+        {
+            entity.HasMany(h => h.Resources)
+                .WithOne(r => r.Hall)
+                .HasForeignKey(r => r.HallId)
+                .OnDelete(DeleteBehavior.Cascade); // დარბაზთან ერთად იშლება რესურსები
+        });
 
-        //// 4. PARTICIPANT კონფიგურაცია
-        //modelBuilder.Entity<Participant>(entity =>
-        //{
-        //    entity.HasKey(p => p.Id);
-        //    entity.HasOne(p => p.Event)
-        //        .WithMany()
-        //        .HasForeignKey(p => p.EventId)
-        //        .OnDelete(DeleteBehavior.Restrict);
-        //});
-
-        //// 5. RESOURCE კონფიგურაცია
-        //modelBuilder.Entity<Resource>(entity =>
-        //{
-        //    entity.HasKey(r => r.Id);
-        //    entity.Property(r => r.Name).IsRequired().HasMaxLength(100);
-        //});
-
-        //// 6. RESERVATION კონფიგურაცია (რესურსების მართვა)
-        //modelBuilder.Entity<Reservation>(entity =>
-        //{
-        //    entity.HasKey(r => r.Id);
-
-        //    // კავშირი ღონისძიებასთან
-        //    entity.HasOne(r => r.Event)
-        //        .WithMany()
-        //        .HasForeignKey(r => r.EventId)
-        //        .OnDelete(DeleteBehavior.Cascade);
-
-        //    // კავშირი კონკრეტულ რესურსთან (დარბაზი/აღჭურვილობა)
-        //    entity.HasOne(r => r.Resource)
-        //        .WithMany()
-        //        .HasForeignKey(r => r.ResourceId)
-        //        .OnDelete(DeleteBehavior.Restrict);
-        //});
-
-        //// 7. USER კონფიგურაცია
-        //modelBuilder.Entity<User>(entity =>
-        //{
-        //    entity.HasKey(u => u.Id);
-        //    entity.HasIndex(u => u.Email).IsUnique();
-        //    entity.Property(u => u.Role)
-        //        .HasConversion(v => v.ToString(), v => (UserRole)Enum.Parse(typeof(UserRole), v));
-        //});
+        // -------------------- REVIEW --------------------
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.HasOne(r => r.Event)
+                .WithMany()
+                .HasForeignKey(r => r.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 }
