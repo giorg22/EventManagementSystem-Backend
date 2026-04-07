@@ -19,4 +19,6 @@ public interface IAnalyticsService
     /// აბრუნებს გაყიდვების განაწილებას ბილეთების ტიპების მიხედვით
     /// </summary>
     Task<List<TicketTypeStatsDto>> GetStatsByTicketTypeAsync(int eventId);
+
+    Task<AttendanceDto> GetAttendanceStatsAsync(int eventId); // ახალი მეთოდი
 }

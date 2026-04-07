@@ -21,4 +21,9 @@ public class AnalyticsController : ControllerBase
     [HttpGet("{eventId}/ticket-types")]
     public async Task<ActionResult<List<TicketTypeStatsDto>>> GetTicketTypeStats(int eventId)
         => Ok(await _mediator.Send(new GetTicketTypeStatsQuery(eventId)));
+
+    [HttpGet("{eventId}/attendance")]
+    public async Task<ActionResult<AttendanceDto>> GetAttendance(int eventId)
+        => Ok(await _mediator.Send(new GetEventAttendanceQuery(eventId)));
+
 }
