@@ -20,6 +20,7 @@ public class GetEventsHandler : IRequestHandler<GetEventsQuery, List<EventDto>>
             Capacity = e.Capacity,
             HallId = e.HallId,
             ImageUrl = e.ImageUrl,
+            Hall = e.Hall,
             Tickets = e.Tickets.Select(t => new TicketDto
             {
                 Id = t.Id,

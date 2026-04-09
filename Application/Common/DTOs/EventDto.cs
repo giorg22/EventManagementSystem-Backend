@@ -9,6 +9,7 @@
     public int HallId { get; set; }
     public string Status { get; set; } = "DRAFT";
     public string? ImageUrl { get; set; }
+    public Hall Hall { get; set; }
     public List<TicketDto> Tickets { get; set; } = new();
     public List<ArtistDto> Artists { get; set; } = new();
 }

@@ -12,6 +12,7 @@ public class EventRepository : BaseRepository<Event, int>, IEventRepository
     public async Task<Event?> GetEventWithTicketsAndArtistsAsync(int id)
     {
         return await _context.Events
+            .Include(x => x.Hall)
             .Include(x => x.Artists)
             .Include(e => e.Tickets)
             .FirstOrDefaultAsync(e => e.Id == id);
@@ -47,6 +48,7 @@ public class EventRepository : BaseRepository<Event, int>, IEventRepository
         return await _context.Events
             .Include(x => x.Artists)
             .Include(e => e.Tickets)
+            .Include(x => x.Hall)
             .ToListAsync();
     }
 }

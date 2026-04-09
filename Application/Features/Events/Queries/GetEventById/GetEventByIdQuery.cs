@@ -23,6 +23,7 @@ public class GetEventByIdQueryHandler : IRequestHandler<GetEventByIdQuery, Event
             Capacity = ev.Capacity,
             HallId = ev.HallId,
             ImageUrl = ev.ImageUrl,
+            Hall = ev.Hall,
             Tickets = ev.Tickets.Select(t => new TicketDto
             {
                 Id = t.Id,
