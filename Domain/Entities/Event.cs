@@ -2,6 +2,8 @@
 
 public class Event : BaseEntity<int>
 {
+    public int UserId { get; set; }
+    public User User { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }

@@ -13,6 +13,7 @@ public class CreateEventHandler : IRequestHandler<CreateEventCommand, int>
     {
         var entity = new Event
         {
+            UserId = req.UserId,
             Title = req.Title,
             Description = req.Description,
             ImageUrl = req.ImageUrl,

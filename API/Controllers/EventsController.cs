@@ -12,6 +12,9 @@ public class EventsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<EventDto>>> GetAll() => await _mediator.Send(new GetEventsQuery());
 
+    [HttpGet("GetMyEvents/{userId}")]
+    public async Task<ActionResult<List<EventDto>>> GetMyEvents(int userId) => await _mediator.Send(new GetMyEventsQuery(userId));
+
     [HttpGet("{id}")]
     public async Task<ActionResult<EventDto>> GetById(int id) => await _mediator.Send(new GetEventByIdQuery(id));
 
