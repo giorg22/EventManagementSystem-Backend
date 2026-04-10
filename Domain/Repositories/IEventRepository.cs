@@ -6,5 +6,5 @@
 
     Task<List<Event>> GetUpcomingEventsAsync();
 
-    Task<List<Event>> GetFilteredEventsAsync(string? searchTerm, string? status);
+    Task<List<Event>> GetFilteredEventsAsync(string? searchTerm);
 }

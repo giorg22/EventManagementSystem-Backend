@@ -26,18 +26,13 @@ public class EventRepository : BaseRepository<Event, int>, IEventRepository
             .ToListAsync();
     }
 
-    public async Task<List<Event>> GetFilteredEventsAsync(string? searchTerm, string? status)
+    public async Task<List<Event>> GetFilteredEventsAsync(string? searchTerm)
     {
         var query = _context.Events.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             query = query.Where(e => e.Title.Contains(searchTerm) || e.Description.Contains(searchTerm));
-        }
-
-        if (!string.IsNullOrWhiteSpace(status))
-        {
-            query = query.Where(e => e.Status.ToString() == status);
         }
 
         return await query.ToListAsync();

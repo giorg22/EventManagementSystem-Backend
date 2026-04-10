@@ -1,1 +1,1 @@
-﻿public enum EventStatus { Draft, Published, Completed }
+﻿public enum EventStatus { დრაფტი, აქტიური, დასრულებული }

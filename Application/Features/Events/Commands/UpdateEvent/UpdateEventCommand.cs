@@ -14,5 +14,5 @@ public record UpdateEventCommand : IRequest<bool>
     public List<UpdateArtistDto> Artists { get; init; } = new();
 }
 
-public record UpdateTicketDto(string Type, decimal Price, int Quantity);
+public record UpdateTicketDto(string Type, decimal Price, int Quantity, int Id);
 public record UpdateArtistDto(string FullName, string Role);

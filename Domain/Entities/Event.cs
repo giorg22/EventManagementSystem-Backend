@@ -7,7 +7,6 @@ public class Event : BaseEntity<int>
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public int Capacity { get; set; }
-    public EventStatus Status { get; set; }
     public int HallId { get; set; }
     public Hall Hall { get; set; }
     public string? ImageUrl { get; set; }

@@ -20,8 +20,6 @@ public class CreateEventHandler : IRequestHandler<CreateEventCommand, int>
             EndDate = req.EndDate,
             Capacity = req.Capacity,
             HallId = req.HallId,
-            Status = EventStatus.Draft,
-
             Tickets = req.Tickets.Select(t => new Ticket
             {
                 Type = t.Type,

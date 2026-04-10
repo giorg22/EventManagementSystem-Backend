@@ -10,17 +10,6 @@ public class EventService : IEventService
         _eventRepo = eventRepo;
         _context = context;
     }
-
-    public async Task<bool> PublishEventAsync(int eventId)
-    {
-        var ev = await _eventRepo.GetByIdAsync(eventId);
-        if (ev == null || ev.StartDate <= DateTime.UtcNow) return false;
-
-        ev.Status = EventStatus.Published;
-        await _eventRepo.UpdateAsync(ev);
-        return true;
-    }
-
     public async Task<bool> IsCapacityReachedAsync(int eventId)
     {
         var ev = await _eventRepo.GetByIdAsync(eventId);
