@@ -47,16 +47,12 @@ public class TicketService : ITicketService
 
     public async Task<string> ProcessTicketPurchaseAsync(int ticketId, int userId, decimal amount)
     {
-        // 1. გადახდის შესრულება
         var transactionId = await _paymentProvider.ProcessPaymentAsync(amount);
 
         if (string.IsNullOrEmpty(transactionId)) throw new Exception("Payment Failed");
 
-        // 2. QR კოდის უნიკალური სტრინგის გენერაცია
-        // ეს სტრინგი შემდეგ გამოიყენება QR კოდის ვიზუალის შესაქმნელად
         string qrContent = $"EVENT-{ticketId}-{transactionId}-{DateTime.UtcNow.Ticks}";
 
-        // 3. ბილეთის შენახვა (რეპოზიტორიის საშუალებით)
         var purchase = new Purchase
         {
             TicketId = ticketId,

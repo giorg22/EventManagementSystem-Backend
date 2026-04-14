@@ -9,17 +9,14 @@ public static class PasswordHasher
 
     public static string HashPassword(this string password)
     {
-        // Generate a random salt
         byte[] salt = new byte[SaltSize];
         using (var rng = new RNGCryptoServiceProvider())
         {
             rng.GetBytes(salt);
         }
 
-        // Compute the hash
         byte[] hash = ComputeHash(password, salt);
 
-        // Combine the salt and hash into a single string
         var builder = new StringBuilder();
         builder.Append(Convert.ToBase64String(salt));
         builder.Append(":");
@@ -29,15 +26,12 @@ public static class PasswordHasher
 
     public static bool VerifyPassword(this string password, string hashedPassword)
     {
-        // Extract the salt and hash from the string
         var parts = hashedPassword.Split(':');
         byte[] salt = Convert.FromBase64String(parts[0]);
         byte[] storedHash = Convert.FromBase64String(parts[1]);
 
-        // Compute the hash of the password using the same salt
         byte[] computedHash = ComputeHash(password, salt);
 
-        // Compare the hashes
         if (computedHash.Length != storedHash.Length)
         {
             return false;

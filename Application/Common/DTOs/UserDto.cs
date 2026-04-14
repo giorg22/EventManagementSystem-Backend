@@ -8,5 +8,5 @@
     public string Role { get; set; } = string.Empty;
     public bool IsVerified { get; set; }
     public DateTime CreatedAt { get; set; }
-    public string? Token { get; set; } // For authentication responses
+    public string? Token { get; set; }
 }

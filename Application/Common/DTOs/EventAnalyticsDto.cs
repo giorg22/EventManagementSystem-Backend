@@ -5,10 +5,8 @@
     public double AttendanceRate { get; init; }
     public int ActualAttendance { get; init; }
 
-    // გაყიდვები ბილეთების ტიპების მიხედვით (მაგ: VIP: 10, Standard: 50)
     public List<TicketTypeStatsDto> StatsByType { get; init; } = new();
 
-    // გაყიდვების დინამიკა დღეების მიხედვით (გრაფიკისთვის)
     public List<DailySalesDto> DailySales { get; init; } = new();
 }
 

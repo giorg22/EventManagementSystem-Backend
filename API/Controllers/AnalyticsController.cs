@@ -8,12 +8,10 @@ public class AnalyticsController : ControllerBase
     private readonly IMediator _mediator;
     public AnalyticsController(IMediator mediator) => _mediator = mediator;
 
-    // მთლიანი დეშბორდი
     [HttpGet("{eventId}")]
     public async Task<IActionResult> GetFullStats(int eventId)
         => Ok(await _mediator.Send(new GetEventAnalyticsQuery(eventId)));
 
-    // მხოლოდ გრაფიკის მონაცემები (მაგ. ბოლო 7 დღე)
     [HttpGet("{eventId}/daily-sales")]
     public async Task<IActionResult> GetDailySales(int eventId, [FromQuery] int days = 7)
         => Ok(await _mediator.Send(new GetDailySalesQuery(eventId, days)));

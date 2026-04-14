@@ -18,7 +18,6 @@ public class TicketRepository : BaseRepository<Ticket, int>, ITicketRepository
 
     public async Task<int> SavePurchaseAsync(Purchase purchase)
     {
-        // რადგან Purchase ცალკე ენტობაა და მას თავისი რეპოზიტორია შეიძლება არ ჰქონდეს
         await _context.Set<Purchase>().AddAsync(purchase);
         await _context.SaveChangesAsync();
         return purchase.Id;

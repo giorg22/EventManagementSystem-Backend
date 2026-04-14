@@ -7,7 +7,6 @@ public class ApplicationDbContext : DbContext
     {
     }
 
-    // ძირითადი ცხრილები
     public DbSet<Event> Events { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<User> Users { get; set; }
@@ -22,7 +21,6 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // -------------------- EVENT --------------------
         modelBuilder.Entity<Event>(entity =>
         {
             entity.HasOne(e => e.Hall)
@@ -30,12 +28,10 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(e => e.HallId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Many-to-Many Artist-ებთან
             entity.HasMany(e => e.Artists)
                 .WithMany(a => a.Events);
         });
 
-        // -------------------- PURCHASE --------------------
         modelBuilder.Entity<Purchase>(entity =>
         {
             entity.HasOne(p => p.Ticket)
@@ -52,10 +48,8 @@ public class ApplicationDbContext : DbContext
                 .HasConversion<string>();
         });
 
-        // -------------------- PARTICIPANT --------------------
         modelBuilder.Entity<Participant>(entity =>
         {
-            // აუცილებელია Ticket-თან კავშირი
             entity.HasOne(p => p.Ticket)
                 .WithMany()
                 .HasForeignKey(p => p.TicketId)
@@ -72,16 +66,14 @@ public class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.NoAction);
         });
 
-        // -------------------- HALL & RESOURCE --------------------
         modelBuilder.Entity<Hall>(entity =>
         {
             entity.HasMany(h => h.Resources)
                 .WithOne(r => r.Hall)
                 .HasForeignKey(r => r.HallId)
-                .OnDelete(DeleteBehavior.Cascade); // დარბაზთან ერთად იშლება რესურსები
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // -------------------- REVIEW --------------------
         modelBuilder.Entity<Review>(entity =>
         {
             entity.HasOne(r => r.Event)

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260403085135_adfsdfdsddddddffdddddfddd")]
-    partial class adfsdfdsddddddffdddddfddd
+    [Migration("20260414144432_testtest")]
+    partial class testtest
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,16 +89,18 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("HallId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Events");
                 });
@@ -354,7 +356,15 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("User", "User")
+                        .WithMany("Events")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Hall");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Participant", b =>
@@ -453,6 +463,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("User", b =>
                 {
+                    b.Navigation("Events");
+
                     b.Navigation("Participations");
                 });
 #pragma warning restore 612, 618

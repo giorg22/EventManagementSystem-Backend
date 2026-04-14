@@ -38,18 +38,16 @@ public class PurchaseTicketCommandHandler : IRequestHandler<PurchaseTicketComman
             decimal subTotal = ticket.Price * selection.Quantity;
             totalToPay += subTotal;
 
-            // 1. ვქმნით ცალკეულ Purchase ობიექტს თითოეული ბილეთის ტიპისთვის
             purchasesToCreate.Add(new Purchase
             {
-                TicketId = selection.TicketId, // აქ მიეთითება კონკრეტული ტიპის ID
+                TicketId = selection.TicketId, 
                 UserId = request.UserId,
                 Quantity = selection.Quantity,
                 TotalAmount = subTotal,
                 PurchaseDate = DateTime.UtcNow,
-                Status = PurchaseStatus.Completed // ან Pending, გადახდის ლოგიკიდან გამომდინარე
+                Status = PurchaseStatus.Completed
             });
 
-            // 2. ვამზადებთ მონაწილეებს (Participants) უნიკალური QR კოდებით
             for (int i = 0; i < selection.Quantity; i++)
             {
                 participantsToAdd.Add(new Participant
@@ -62,27 +60,22 @@ public class PurchaseTicketCommandHandler : IRequestHandler<PurchaseTicketComman
                 });
             }
 
-            // 3. ვაახლებთ რაოდენობას ბაზაში
             ticket.RemainingQuantity -= selection.Quantity;
             await _ticketRepo.UpdateAsync(ticket);
         }
 
-        // 4. გადახდა ხორციელდება ერთიანად (მთლიან ჯამზე)
         await _paymentService.ProcessPaymentAsync(totalToPay);
 
-        // 5. ვინახავთ ყველა შესყიდვას ბაზაში
         foreach (var purchase in purchasesToCreate)
         {
             await _purchaseRepository.AddAsync(purchase);
         }
 
-        // 6. ვინახავთ ყველა მონაწილეს
         foreach (var p in participantsToAdd)
         {
             await _participantRepo.AddAsync(p);
         }
 
-        // ვაბრუნებთ ბოლო შესყიდვის ID-ს ან შეგიძლიათ შეცვალოთ ლოგიკა საჭიროებისამებრ
         return purchasesToCreate.LastOrDefault()?.Id ?? 0;
     }
 }

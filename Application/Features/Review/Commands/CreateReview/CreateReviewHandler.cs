@@ -19,7 +19,6 @@ public class CreateReviewHandler : IRequestHandler<CreateReviewCommand, ReviewDt
 
         await _reviewRepo.AddAsync(review);
 
-        //return new ReviewDto(review.Id, review.UserId, review.Comment, review.Rating, review.CreatedAt);
         return new ReviewDto { Id = review.Id, UserName = review.UserName, Rating = review.Rating, CreatedAt = review.CreatedAt, Comment = review.Comment };
     }
 }

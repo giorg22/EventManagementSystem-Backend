@@ -15,7 +15,6 @@ public class EventService : IEventService
         var ev = await _eventRepo.GetByIdAsync(eventId);
         if (ev == null) return true;
 
-        // ვამოწმებთ გაყიდული ბილეთების რაოდენობას Capacity-სთან
         return ev.Tickets.Sum(t => t.Quantity) >= ev.Capacity;
     }
 

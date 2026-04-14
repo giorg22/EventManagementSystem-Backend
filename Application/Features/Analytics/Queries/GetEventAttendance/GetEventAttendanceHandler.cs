@@ -13,7 +13,6 @@ public class GetEventAttendanceHandler : IRequestHandler<GetEventAttendanceQuery
 
     public async Task<AttendanceDto> Handle(GetEventAttendanceQuery request, CancellationToken cancellationToken)
     {
-        // პირდაპირ სერვისის გამოძახება
         return await _analyticsService.GetAttendanceStatsAsync(request.EventId);
     }
 }

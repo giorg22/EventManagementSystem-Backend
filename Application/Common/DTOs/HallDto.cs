@@ -6,6 +6,5 @@
     public string Location { get; set; } = string.Empty;
     public int MaxCapacity { get; set; }
 
-    // დაკავშირებული რესურსების სია
     public List<ResourceDto> Resources { get; init; } = new();
 }

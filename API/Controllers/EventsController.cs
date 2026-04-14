@@ -30,10 +30,10 @@ public class EventsController : ControllerBase
         }
 
         await _mediator.Send(command);
-        return NoContent(); // 204 წარმატებული განახლებისთვის
+        return NoContent();
     }
 
-    [HttpDelete("{id}")] // წაშლა
+    [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
         await _mediator.Send(new DeleteEventCommand(id));

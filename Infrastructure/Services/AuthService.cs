@@ -23,7 +23,6 @@ public class AuthService : IAuthService
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.SecurityKey));
         var claims = new List<Claim>
         {
-            //new Claim(type:"Id", user.Id.ToString()),
             new Claim(type:ClaimTypes.NameIdentifier, user.Id.ToString()),
         };
         var accessToken = new JwtSecurityToken(

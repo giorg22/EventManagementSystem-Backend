@@ -22,7 +22,7 @@ public class GetTicketByIdQueryHandler : IRequestHandler<GetTicketByIdQuery, Tic
             Id = ticket.Id,
             Type = ticket.Type,
             Price = ticket.Price,
-            Remaining = ticket.RemainingQuantity // დარწმუნდით, რომ DTO-ში ეს ველი გაქვთ
+            Remaining = ticket.RemainingQuantity
         };
     }
 }

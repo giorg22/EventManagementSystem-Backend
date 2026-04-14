@@ -27,16 +27,15 @@ public class AnalyticsService : IAnalyticsService
             ScannedTickets = scannedTickets,
             AttendanceRate = totalTickets > 0 ? (double)scannedTickets / totalTickets * 100 : 0,
 
-            // ბოლო 5 დასწრება დინამიკისთვის (თუ გაქვს ScannedAt ველი, გამოიყენე ის)
             RecentScans = participants
                 .Where(p => p.Attendance)
-                .OrderByDescending(p => p.RegistrationDate) // აქ RegistrationDate-ს ვიყენებთ, თუ ScannedAt არ გაქვს
+                .OrderByDescending(p => p.RegistrationDate)
                 .Take(5)
                 .Select(p => new AttendeeStatusDto
                 {
-                    TicketCode = p.Id.ToString(), // ან სხვა უნიკალური კოდი
+                    TicketCode = p.Id.ToString(),
                     TicketType = p.Ticket?.Type ?? "Standard",
-                    ScannedAt = DateTime.UtcNow // რადგან ისტორიული სკანირების დრო შეიძლება არ გქონდეს
+                    ScannedAt = DateTime.UtcNow 
                 })
                 .ToList()
         };
@@ -51,7 +50,6 @@ public class AnalyticsService : IAnalyticsService
             return new EventAnalyticsDto();
         }
 
-        // ვიყენებთ ქვემოთ დაწერილ მეთოდებს, რომ კოდი არ გაორმაგდეს
         var statsByType = await GetStatsByTicketTypeAsync(eventId);
         var dailySales = await GetDailySalesAsync(eventId);
 
@@ -66,7 +64,6 @@ public class AnalyticsService : IAnalyticsService
         };
     }
 
-    // ინტერფეისის იმპლემენტაცია: გაყიდვების დინამიკა
     public async Task<List<DailySalesDto>> GetDailySalesAsync(int eventId, int daysLimit = 30)
     {
         var participants = await _participantRepo.GetByEventIdAsync(eventId);
@@ -84,7 +81,6 @@ public class AnalyticsService : IAnalyticsService
             .ToList();
     }
 
-    // ინტერფეისის იმპლემენტაცია: სტატისტიკა ტიპების მიხედვით
     public async Task<List<TicketTypeStatsDto>> GetStatsByTicketTypeAsync(int eventId)
     {
         var participants = await _participantRepo.GetByEventIdAsync(eventId);

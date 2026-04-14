@@ -25,16 +25,13 @@ public class HallReposotory : BaseRepository<Hall, int>, IHallRepository
 
     public async Task UpdateAsync(Hall hall, List<Resource> newResources)
     {
-        // 1. არსებული რესურსების წაშლა ბაზიდან
         if (hall.Resources.Any())
         {
             _context.Resources.RemoveRange(hall.Resources);
         }
 
-        // 2. ახალი რესურსების მიბმა დარბაზზე
         hall.Resources = newResources;
 
-        // 3. დარბაზის მონაცემების განახლება (EF Tracker ავტომატურად ხედავს ცვლილებებს)
         _context.Halls.Update(hall);
 
         await _context.SaveChangesAsync();

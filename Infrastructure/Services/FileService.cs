@@ -1,5 +1,4 @@
-﻿// Infrastructure/Services/FileService.cs
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
 public class FileService : IFileService
@@ -10,7 +9,6 @@ public class FileService : IFileService
 
     public async Task<string> SaveFileAsync(IFormFile file, string folderName)
     {
-        // გზა: wwwroot/uploads/events/
         var rootPath = Path.Combine(_env.WebRootPath, "uploads", folderName);
 
         if (!Directory.Exists(rootPath))
